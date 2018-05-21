@@ -4,7 +4,7 @@ from bluedot.btcomm import BluetoothServer
 from signal import pause
 
 
-class PiBluetoothListener:
+class PiBluetoothListener(threading.Thread):
 
     def __init__(self):
         self.ser = None
@@ -33,7 +33,7 @@ class PiBluetoothListener:
         if not len(pkg.keys()) == 1:
             raise ValueError('The command JSON should only contain a single key referencing the function in the outer scope.')
 
-        command = pkg.keys()[0]
+        command = list(pkg.keys())[0]
         args = pkg[command]
         self._run_command(command, args)
 
@@ -58,7 +58,7 @@ class PiBluetoothListener:
 
         self.command_register[command_string] = {
             'function': func,
-            'arg_names': func.func_code.co_varnames[:func.func_code.co_argcount],
+            'arg_names': func.__code__.co_varnames[:func.__code__.co_argcount],
         }
 
         return None
